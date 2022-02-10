@@ -100,66 +100,45 @@ app.post("/api/justify", (req, res) => {
   }
 });
 
-// Create user in DB
-app.post("/api/user/signup", async (req, res) => {
-  const { email } = req.fields;
-
-  try {
-    // seek for the user in DB
-    const users = await User.findOne({ email: email });
-    // if user exist, send an error
-    if (users) {
-      res.status(409).json({
-        message: "Email already exist",
-      });
-      // if not, create the user
-    } else {
-      if (email) {
-        const newUsers = new User({
-          email: email,
-        });
-        await newUsers.save();
-        res.status(200).json({
-          email: newUsers.email,
-        });
-        //verify is the email is send
-      } else {
-        res.status(400).json({ message: "Missing parameters" });
-      }
-    }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Send an access token to the user
+// Send acess token
 app.post("/api/token", async (req, res) => {
   const { email } = req.fields;
-
   try {
+    // seek for the user in DB
     const user = await User.findOne({ email: email });
-    const userEmail = user.email;
-    // if user is registed, send the token
-    if (user) {
-      jwt.sign(
-        { userEmail },
-        "secretkey",
-        { expiresIn: "24h" },
-        (err, token) => {
+    //verify is the email is send
+    if (email) {
+      //verify is the user is find
+      if (user) {
+        jwt.sign({ email }, "secretkey", { expiresIn: "24h" }, (err, token) => {
           tokenRateLimit = { token: token, words: 0, date: new Date() };
           res.status(200).json({ token });
+        });
+      } else {
+        if (user === null) {
+          const newUsers = new User({
+            email: email,
+          });
+          await newUsers.save();
+          jwt.sign(
+            { email },
+            "secretkey",
+            { expiresIn: "24h" },
+            (err, token) => {
+              tokenRateLimit = { token: token, words: 0, date: new Date() };
+              res.status(200).json({ token });
+            }
+          );
         }
-      );
-      // if the user is not registed, send an error
+      }
     } else {
-      res.status(409).json({
-        message: "Email not found",
-      });
+      res.status(400).json({ message: "Email is missing" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
+
 // API home page
 app.get("/api", (req, res) => {
   res.status(200).json({
