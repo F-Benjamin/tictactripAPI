@@ -3,10 +3,12 @@ const express = require("express");
 const formidableMiddleware = require("express-formidable");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 //Initialize
 const app = express();
 app.use(formidableMiddleware());
+app.use(cors());
 
 mongoose.connect("mongodb://localhost:27017/tictac", {
   useNewUrlParser: true,
