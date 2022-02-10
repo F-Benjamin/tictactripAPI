@@ -10,7 +10,7 @@ const app = express();
 app.use(formidableMiddleware());
 app.use(cors());
 
-mongoose.connect("mongodb://localhost:27017/tictac", {
+mongoose.connect(process.env.BDD_ADRESS, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

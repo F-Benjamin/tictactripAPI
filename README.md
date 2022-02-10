@@ -1,8 +1,6 @@
 #API REST justify text with Node js
 
-Pour pouvoir tester ce code il faut avoir postman et MongoDB Compass.
-
-Dans MongoDB Compass connecté vous sur l'url mongodb://localhost:27017
+Pour pouvoir tester ce code il faut avoir postman.
 
 Dans postman taper l'URL localhost:3002/api/token
 
